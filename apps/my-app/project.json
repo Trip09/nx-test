@@ -1,0 +1,41 @@
+{
+  "name": "my-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/my-app/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/my-app",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "apps/my-app/src/main.ts",
+        "tsConfig": "apps/my-app/tsconfig.app.json",
+        "assets": ["apps/my-app/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "entryPoints": ["main.ts", "main.js"],
+          "treeShaking": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "my-app:build"
+      }
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "command": "docker build -f apps/my-app/Dockerfile . -t my-app"
+    }
+  }
+}
